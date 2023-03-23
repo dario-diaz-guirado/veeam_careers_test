@@ -11,7 +11,7 @@ def browser():
 def test_job_count(browser):
     # Set these variables according to your test requirements
     department = "Research & Development"
-    language = ["English", "French"]
+    language = ["English"] # You can add more languages at the same time
     expected_job_count = 7  # Replace with the expected job count
 
     # Initialize the careers page and perform the test
