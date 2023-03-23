@@ -1,20 +1,21 @@
 from selenium.webdriver.common.by import By
-from .base_page import BasePage
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-class CareersPage(BasePage):
+class CareersPage:
 
     DEPARTMENT_SELECT = (By.CSS_SELECTOR, ":nth-of-type(2) > div > div > button")
     DEPARTMENT_SELECT_OPTIONS = (By.CSS_SELECTOR, "div:first-of-type > div > div:nth-of-type(2) > div > div > div > a")
     LANGUAGE_SELECT = (By.CSS_SELECTOR, ":nth-of-type(3) > div > div > button")
     LANGUAGE_SELECT_OPTIONS = (By.CSS_SELECTOR, ":nth-of-type(3) > div > div > div label")
     JOB_LISTING = (By.CSS_SELECTOR, "div:nth-of-type(2) > div > a")
-    FILTERS_SUBMIT_BUTTON = (By.XPATH, "//button[text()='Show jobs']")
+    BASE_URL = "https://cz.careers.veeam.com/vacancies"
 
     def __init__(self, driver):
-        super().__init__(driver)
+        self.driver = driver
 
-    def open(self, url="https://cz.careers.veeam.com/vacancies"):
-        self.driver.get(url)
+    def open(self):
+        self.driver.get(self.BASE_URL)
 
     def maximize_window(self):
         self.driver.maximize_window()
@@ -31,3 +32,26 @@ class CareersPage(BasePage):
 
     def click_button(self, locator):
         self.wait_for_element(locator).click()
+
+    def wait_for_element(self, locator, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
+
+    def click(self, locator):
+        self.wait_for_element(locator).click()
+
+    def select_dropdown_option(self, button_locator, options_locator, value):
+        button = self.wait_for_element(button_locator)
+        button.click()
+
+        options = self.driver.find_elements(*options_locator)
+
+        if isinstance(value, list):
+            for option in options:
+                if option.text in value:
+                    option.click()
+        else:
+            for option in options:
+                if option.text == value:
+                    option.click()
+                    break
+
